@@ -1,0 +1,109 @@
+no access-list 110
+
+!--- Phase 1 – Add anti-spoofing entries. 
+!--- Deny special-use address sources. 
+!--- See RFC 3330 for additional special-use addresses.
+
+access-list 110 deny   ip 127.0.0.0 0.255.255.255 any
+access-list 110 deny   ip 192.0.2.0 0.0.0.255 any
+access-list 110 deny   ip 224.0.0.0 31.255.255.255 any
+access-list 110 deny   ip host 255.255.255.255 any
+
+!--- This deny statement should not be configured 
+!--- on Dynamic Host Configuration Protocol (DHCP) relays.
+
+access-list 110 deny   ip host 0.0.0.0 any
+
+!--- Filter RFC 1918 space.
+
+access-list 110 deny   ip 10.0.0.0 0.255.255.255 any
+access-list 110 deny   ip 172.16.0.0 0.15.255.255 any
+access-list 110 deny   ip 192.168.0.0 0.0.255.255 any
+
+!--- Permit BGP to the edge router.
+
+access-list 110 permit tcp host 10.1.1.1 gt 1023 host 10.1.1.2 eq bgp
+access-list 110 permit tcp host 10.1.1.1 eq bgp host 10.1.1.2 gt 1023
+
+!--- Deny your space as source (as noted in RFC 2827).
+
+access-list 110 deny   ip 192.168.201.0 0.0.0.255 any
+
+
+!--- Phase 2 – Explicitly permit return traffic. 
+!--- Allow specific ICMP types.
+
+access-list 110 permit icmp any any echo-reply
+access-list 110 permit icmp any any unreachable
+access-list 110 permit icmp any any time-exceeded
+access-list 110 deny   icmp any any 
+
+!--- These are outgoing DNS queries.
+
+access-list 110 permit udp any eq domain host 192.168.201.104 gt 1023
+
+!--- Permit older DNS queries and replies to primary DNS server.
+
+access-list 110 permit udp any eq domain host 192.168.201.104 eq domain
+
+!--- Permit legitimate business traffic.
+
+access-list 110 permit tcp any 192.168.201.0 0.0.0.255 established
+access-list 110 permit udp any range 1 1023 192.168.201.0 0.0.0.255 gt 1023
+
+!--- Allow FTP data connections.
+
+access-list 110 permit tcp any eq ftp-data 192.168.201.0 0.0.0.255 gt 1023
+
+!--- Allow TFTP data and multimedia connections.
+
+access-list 110 permit udp any gt 1023 192.168.201.0 0.0.0.255 gt 1023
+
+
+!--- Phase 3 – Explicitly permit externally sourced traffic. 
+!--- These are incoming DNS queries.
+
+access-list 110 permit udp any gt 1023 host 192.168.201.104 eq domain
+
+!--- Zone transfer DNS queries to primary DNS server.
+
+access-list 110 permit tcp host 172.16.201.50 gt 1023 host 192.168.201.104 eq domain
+
+!--- Permit older DNS zone transfers.
+
+access-list 110 permit tcp host 172.16.201.50 eq domain host 192.168.201.104 eq domain
+
+!--- Deny all other DNS traffic.
+
+access-list 110 deny   udp any any eq domain
+access-list 110 deny   tcp any any eq domain
+
+!--- Allow IPSec VPN traffic.
+
+access-list 110 permit udp any host 192.168.201.100 eq isakmp
+access-list 110 permit udp any host 192.168.201.100 eq non500-isakmp
+access-list 110 permit esp any host 192.168.201.100
+access-list 110 permit ahp any host 192.168.201.100
+access-list 110 deny   ip any host 192.168.201.100
+
+!--- These are Internet-sourced connections to 
+!--- publicly accessible servers.
+
+access-list 110 permit tcp any host 192.168.201.101 eq www
+access-list 110 permit tcp any host 192.168.201.101 eq 443
+access-list 110 permit tcp any host 192.168.201.102 eq ftp
+
+!--- Data connections to the FTP server are allowed 
+!--- by the permit established ACE in Phase 3. 
+!--- Allow PASV data connections to the FTP server.
+
+access-list 110 permit tcp any gt 1023 host 192.168.201.102 gt 1023
+access-list 110 permit tcp any host 192.168.201.103 eq smtp
+
+
+!--- Phase 4 – Add explicit deny statement. 
+
+access-list 110 deny   ip any any
+
+Edge-router(config)#interface serial 2/0
+Edge-router(config-if)#ip access-group 110 in
