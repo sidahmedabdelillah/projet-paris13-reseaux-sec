@@ -306,41 +306,41 @@ Cette liste de noms de ports TCP peut être utilisée à la place des numéros d
 
 | <!-- -->      | <!-- -->        |
 | ------------- | --------------- |
-| bgp           | coquiller       |
-| chargeur      | connexion       |
-| cmd           | lpd             |
-| jour          | ntp             |
-| rejeter       | pincer          |
-| domaine       | pop2            |
-| écho          | pop3            |
-| exec          | smtp            |
-| doigt         | sunrpc          |
-| ftp           | journal système |
-| ftp-data      | tacacstalgie    |
-| gopher        | telnet          |
-| nom de l'hôte | Heure           |
-| ident         | uucp            |
-| irc           | whois           |
-| klogin        | www             |
+|bgp  | kshell
+|chargen | login|
+|cmd  | lpd|
+|daytime | nntp|
+|discard | pim|
+|domain | pop2|
+|echo | pop3|
+|exec | smtp|
+|finger | sunrpc|
+|ftp  | syslog|
+|ftp-data | tacacstalk|
+|gopher | telnet|
+|hostname |  time|
+|ident | uucp|
+|irc  | whois|
+|klogin | www|
 
 #### **Noms des ports UDP**
 
 Cette liste de noms de ports UDP peut être utilisée à la place des numéros de port lorsque vous configurez la liste de contrôle d'accès dans le logiciel Cisco IOS. Reportez-vous à la RFC du numéro attribué actuel afin de trouver une référence à ces protocoles. Les numéros de port qui correspondent à ces protocoles sont également disponibles lors de la configuration de la liste de contrôle d’accès en entrant un ? à la place d'un numéro de port.
 | <!-- --> | <!-- --> |
 | ------------- | --------------- |
-|bifurquer| ntp|
-|bootpc| pim-auto-rp|
-|boottes| rip|
-|rejeter| snmp|
-|dnsix| piège|
-|domaine| sunrpc|
-|écho| journal système|
-|isakmp| tacacs|
-|mobile-ip | parler|
-|serveur de noms| tftp|
-|netbios-dgm | Heure|
-|netbios-ns | qui|
-|netbios-ss| xdmcp|
+|biff | ntp|
+|bootpc | pim-auto-rp|
+|bootps | rip|
+|discard | snmp|
+|dnsix | snmptrap|
+|domain | sunrpc|
+|echo | syslog|
+|isakmp | tacacs|
+|mobile-ip | talk|
+|nameserver | tftp|
+|netbios-dgm | time|
+|netbios-ns | who|
+|netbios-ss |  xdmcp|
 
 ### **Directives de déploiement**
 
